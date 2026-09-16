@@ -64,6 +64,133 @@ Ein Screen-Test prüft das **Ergebnis** aus `ui.md` Frage 1 — was ist danach
 anders? — nicht das Aussehen. Das Aussehen prüft der Mockup-Kreislauf. Die
 beiden prüfen Verschiedenes, das eine ersetzt das andere nicht.
 
+#### T-001
+
+- **Prüft:** C-002.
+- **Was wird geprüft?** Dass das gemeinsame Kotlin-Multiplatform-Modul
+  den Begrüßungstext aus dem Source korrekt bereitstellt, unabhängig
+  von Android- oder iOS-Rendering.
+- **Womit?** Reiner Kotlin-Unit-Test auf den gemeinsamen Code, keine
+  externe Komponente beteiligt.
+- **Was wird erwartet?** Der bereitgestellte Text entspricht exakt dem
+  Source-String (z. B. "Hello World" bzw. nach Änderung "Hallo Welt").
+- **Fehlerfall:** Text weicht vom Source-String ab oder ist leer.
+- **Defaults:** Happy Case = Text vorhanden und korrekt. Leere Eingabe =
+  Source-String leer → Test schlägt fehl (kein `NG-001`-Verstoß, aber
+  falsches Verhalten). Ungültiger Wert — passt nicht, der String ist
+  frei, keine Liste. Fehlende Verbindung — passt nicht, keine externe
+  Abhängigkeit.
+
+#### T-002
+
+- **Prüft:** I-004.
+- **Was wird geprüft?** Dass der Screen beim Start den Text aus C-002
+  tatsächlich rendert — auf Android und auf iOS über Compose
+  Multiplatform.
+- **Womit?** Compose-Multiplatform-UI-Test, keine externe Komponente.
+- **Was wird erwartet?** Text ist im gerenderten UI-Baum sichtbar.
+- **Fehlerfall:** App stürzt beim Start ab, oder der Text fehlt.
+- **Defaults:** Happy Case = Text sichtbar nach Start. Leere Eingabe =
+  leerer Text aus C-002 → Screen bleibt leer, kein Absturz erwartet.
+  Ungültiger Wert — passt nicht. Fehlende Verbindung — passt nicht,
+  I-004 hat keine externe Abhängigkeit.
+
+#### T-003
+
+- **Prüft:** S-001.
+- **Was wird geprüft?** Das Ergebnis aus `ui.md` — dass nach der
+  Anzeige nichts weiter passiert.
+- **Womit?** UI-Test, prüft Abwesenheit von Navigation oder
+  Zustandswechsel nach dem Start.
+- **Was wird erwartet?** App bleibt auf S-001, keine Navigation wird
+  ausgelöst.
+- **Fehlerfall:** unerwartete Navigation oder Absturz.
+- **Defaults:** Happy Case = Screen bleibt stabil. Leere Eingabe,
+  ungültiger Wert, fehlende Verbindung — passt nicht, S-001 nimmt keine
+  Eingabe entgegen.
+
+#### T-004
+
+- **Prüft:** C-001.
+- **mockt:** X-001, X-002, X-003, X-004.
+- **Was wird geprüft?** Dass der Workflow die Stufen Build → Test →
+  Android-Einreichung → iOS-Einreichung in der richtigen Reihenfolge
+  durchläuft und bei einem Fehlschlag abbricht.
+- **Womit?** Lokale Simulation der Workflow-Definition (z. B. mit
+  `act`), alle externen Komponenten gemockt, damit der Workflow allein
+  im Fokus steht.
+- **Was wird erwartet?** Stufenreihenfolge eingehalten; ein Fehlschlag
+  in einer Stufe verhindert die nachfolgenden.
+- **Fehlerfall:** Build oder Test schlägt fehl → keine Einreichung wird
+  ausgelöst.
+- **Defaults:** Happy Case = alle Stufen laufen durch. Leere Eingabe =
+  Push ohne Änderungen → Workflow läuft trotzdem (kein Sonderfall).
+  Ungültiger Wert = Code kompiliert nicht → Abbruch in der
+  Build-Stufe. Fehlende Verbindung = X-001 selbst nicht erreichbar —
+  passt nicht, das ist die Ausführungsplattform selbst, kein Aufruf von
+  C-001 aus.
+
+#### T-005
+
+- **Prüft:** I-001.
+- **mockt:** X-001.
+- **Was wird geprüft?** Dass ein simulierter Push-Event den Workflow
+  auslöst und den richtigen Commit-Stand übernimmt.
+- **Womit?** Lokale Simulation des Trigger-Events.
+- **Was wird erwartet?** Workflow startet mit dem Source-Stand des
+  simulierten Commits.
+- **Fehlerfall:** kein Push-Event ankommt.
+- **Defaults:** Happy Case = Workflow startet mit korrektem Commit.
+  Leere Eingabe = Push ohne Dateiänderung → Workflow startet trotzdem,
+  passt zum Modell (jeder Push ist ein Auslöser). Ungültiger Wert —
+  passt nicht. Fehlende Verbindung = kein Push-Event → Pipeline bleibt
+  inaktiv, das ist der Ausgangszustand, kein Fehlerfall.
+
+#### T-006
+
+- **Prüft:** I-002.
+- **mockt:** X-002.
+- **laeuft-gegen:** X-004.
+- **Was wird geprüft?** Dass C-001 ein Android-Build-Artefakt über
+  Fastlane korrekt an die (gemockte) Google Play Console übergibt.
+- **Womit?** Echtes Fastlane (Lib, läuft im selben Prozess), simulierte
+  Play-Developer-API-Antwort.
+- **Was wird erwartet?** AAB + Metadaten werden mit korrektem Format
+  übergeben, gemockte Antwort "erfolgreich eingereicht" wird
+  weitergereicht.
+- **Fehlerfall:** gemockte Fehlerantwort der Play Console → I-002
+  meldet Fehlschlag, Workflow bricht in dieser Stufe ab.
+- **Defaults:** Happy Case = Einreichung erfolgreich. Leere Eingabe =
+  kein Build-Artefakt vorhanden → Stufe bricht vor dem Aufruf ab.
+  Ungültiger Wert = fehlerhaftes AAB → Fastlane meldet Validierungsfehler.
+  Fehlende Verbindung = gemockter Verbindungsfehler zur Play Console →
+  Stufe schlägt fehl, sichtbar im Actions-Log.
+- **Hinweis:** Läuft echt gegen Fastlane, deshalb per Modell-Definition
+  Integration trotz einem `prueft`-Ziel — siehe `extern.md` X-004 und
+  die Unschärfe oben im Text.
+
+#### T-007
+
+- **Prüft:** I-003.
+- **mockt:** X-003.
+- **laeuft-gegen:** X-004.
+- **Was wird geprüft?** Dass C-001 ein iOS-Build-Artefakt über Fastlane
+  korrekt an das (gemockte) App Store Connect übergibt.
+- **Womit?** Echtes Fastlane, simulierte App-Store-Connect-API-Antwort.
+- **Was wird erwartet?** IPA + Metadaten werden mit korrektem Format
+  übergeben, gemockte Antwort "eingereicht, in Prüfung" wird
+  weitergereicht.
+- **Fehlerfall:** gemockte Ablehnung (z. B. Guideline 4.2) oder
+  Upload-Fehler → I-003 meldet Fehlschlag, gilt selbst als Ergebnis
+  (G-002).
+- **Defaults:** Happy Case = Einreichung erfolgreich, "in Prüfung".
+  Leere Eingabe = kein Build-Artefakt → Stufe bricht vor dem Aufruf ab.
+  Ungültiger Wert = fehlerhaftes IPA/Signatur → Fastlane meldet
+  Validierungsfehler. Fehlende Verbindung = gemockter Verbindungsfehler
+  zu App Store Connect → Stufe schlägt fehl, sichtbar im Actions-Log.
+- **Hinweis:** wie T-006 per Modell-Definition Integration trotz einem
+  `prueft`-Ziel.
+
 ### 2. Integrationstests
 
 **Explizit gewählte Subsets.** Nicht alle Kombinationen — nur die, die
@@ -75,6 +202,30 @@ Für jeden Test:
 - **Warum dieses Subset?** — die Begründung.
 - **Was wird geprüft?**
 - **Nicht-trivialer Fehlerfall**
+
+#### T-008
+
+- **Prüft:** C-001, C-002, I-001, I-002, I-003.
+- **mockt:** X-001, X-002, X-003.
+- **laeuft-gegen:** X-004.
+- **Warum dieses Subset?** Das ist der eigentliche Zweck des Projekts
+  (G-003): Erst im Zusammenspiel zeigt sich, dass eine Source-Änderung
+  tatsächlich bis zur Store-Einreichung durchläuft — jeder Einzeltest
+  davor prüft nur ein Glied der Kette.
+- **Was wird geprüft?** Eine geänderte Zeichenkette in C-002 (z. B.
+  "Hello World" → "Hallo Welt") ist nach einem simulierten Lauf im
+  eingereichten Artefakt für Android und iOS wiederzufinden.
+- **Nicht-trivialer Fehlerfall:** eine mittlere Stufe (z. B.
+  Android-Einreichung) schlägt fehl, während die andere (iOS) erfolgreich
+  ist — die Kette muss das als Teilerfolg sichtbar machen, nicht als
+  Gesamterfolg melden.
+- **Defaults:** Happy Case = geänderter Text erreicht beide Stores.
+  Leere Eingabe — passt nicht, ein Push ohne Änderung ist kein
+  Sonderfall (siehe T-005). Ungültiger Wert = nicht kompilierender Code
+  → Kette bricht in der Build-Stufe ab, vor jeder Einreichung. Fehlende
+  Verbindung = eine der beiden Store-Verbindungen gemockt nicht
+  erreichbar → die andere Stufe läuft unabhängig weiter (siehe
+  nicht-trivialer Fehlerfall).
 
 ### 3. Defaults
 
@@ -94,6 +245,9 @@ niemand den Unterschied zwischen *nicht anwendbar* und *vergessen*.
 
 Die Defaults sind **generisch** und bekommen keine eigenen IDs: Sie sind
 Szenarien innerhalb des `T-`, das sie mitbringt, keine eigenen Artefakte.
+
+Beantwortet bei jedem `T-` oben (T-001 bis T-008), je mit Begründung, wo
+ein Punkt nicht passt.
 
 ### 4. Was wird nicht getestet?
 
@@ -119,6 +273,10 @@ Komponente — und **innerhalb eines `T-`** nie beides zur selben externen.
 Prüfling allein zu halten, der andere lässt sie mitlaufen, um die Annahme
 zu prüfen.
 
+Nicht getestet: A-001 — ein Akteur ist kein Code. Geprüft wird, was er
+bedient: I-001 (T-005). X-001 bis X-004 werden nie selbst getestet —
+geprüft wird, wie C-001 mit ihnen umgeht (T-004, T-006, T-007, T-008).
+
 ## Was hier entsteht
 
 - `T-` Testfälle
@@ -143,9 +301,9 @@ Ausgemustert: —
 
 ## Zustand
 
-- [ ] Unit-Tests pro Prüfling
-- [ ] Integrationstests (explizit gewählt)
-- [ ] Defaults (Happy Case, triviale Fehlerfälle)
-- [ ] Was wird nicht getestet?
+- [x] Unit-Tests pro Prüfling
+- [x] Integrationstests (explizit gewählt)
+- [x] Defaults (Happy Case, triviale Fehlerfälle)
+- [x] Was wird nicht getestet?
 
 ## Notizen
