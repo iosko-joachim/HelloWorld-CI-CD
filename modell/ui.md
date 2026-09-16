@@ -38,14 +38,38 @@ Für jeden Screen:
 
 Keine Layout-Details. Keine Farben. Keine Positionen. Das kommt im Mockup.
 
+#### S-001 Hello-World-Screen
+
+- **Zweck:** nichts zu tun — der Screen zeigt sich selbst. Er ist der
+  sichtbare Beweis, dass Build und Deployment funktioniert haben.
+- **Ablauf:** App startet, Text erscheint sofort.
+- **Ergebnis:** keins. Der Screen verändert nichts, er zeigt nur an.
+- **Rolle:** zentral — der einzige Screen, und genau der, an dem G-003
+  (sichtbare Source-zu-Store-Kette) beobachtet wird.
+- **Zeigt:** C-002.
+- **Beachtet:** NG-001 (keine echte App-Funktionalität).
+
 ### 2. In welcher Reihenfolge werden die Screens durchlaufen?
 
 Als Diagramm. (Mermaid.)
+
+```mermaid
+flowchart LR
+    Start(["App-Start"]) --> S001["S-001 Hello-World-Screen"]
+```
+
+Es gibt nur einen Screen, also keine Reihenfolge im eigentlichen Sinn.
 
 ### 3. Welche Screens sind zentral?
 
 Zentral heißt: Der Screen gehört zur Kernlogik.
 Peripher heißt: Er ist da, um die Kernlogik zu ermöglichen.
+
+S-001 ist zentral in der UI — es gibt keine peripheren Screens. Das
+ändert nichts an `struktur.md`: Dort ist C-001 (der CI/CD-Workflow) die
+Kernlogik des Gesamtsystems, C-002 und damit S-001 bleiben dort
+peripher. Innerhalb der UI selbst ist S-001 aber der einzige und damit
+zentrale Screen.
 
 ## Was hier entsteht
 
@@ -73,8 +97,8 @@ Ausgemustert: —
 
 ## Zustand
 
-- [ ] Welche Screens gibt es?
-- [ ] In welcher Reihenfolge werden die Screens durchlaufen?
-- [ ] Welche Screens sind zentral?
+- [x] Welche Screens gibt es?
+- [x] In welcher Reihenfolge werden die Screens durchlaufen?
+- [x] Welche Screens sind zentral?
 
 ## Notizen
