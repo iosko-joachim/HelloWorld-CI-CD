@@ -18,6 +18,13 @@ DerivedData/
 *.xcuserstate
 .DS_Store
 
+# Fastlane
+fastlane/report.xml
+fastlane/README.md
+fastlane/test_output/
+*.ipa
+*.dSYM.zip
+
 # Signierung – niemals ins Repository (RISK-003)
 *.keystore
 *.jks

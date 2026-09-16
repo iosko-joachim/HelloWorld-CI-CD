@@ -1,0 +1,3 @@
+app_identifier("com.iosko.helloworldcicd")
+package_name("com.iosko.helloworldcicd")
+team_id(ENV["APPLE_TEAM_ID"])

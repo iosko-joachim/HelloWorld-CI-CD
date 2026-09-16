@@ -20,7 +20,8 @@ android {
         applicationId = "com.iosko.helloworldcicd"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
+        // Jeder Store-Upload braucht eine höhere Nummer: Lauf-Nummer der Pipeline.
+        versionCode = System.getenv("GITHUB_RUN_NUMBER")?.toInt() ?: 1
         versionName = "1.0"
     }
     packaging {
