@@ -74,7 +74,8 @@ platform :ios do
       # Archiv automatisch signiert; die Verteilungs-Signatur kommt beim Export.
       xcargs: "#{auth} DEVELOPMENT_TEAM=#{team} CODE_SIGN_STYLE=Automatic " \
               "CURRENT_PROJECT_VERSION=#{build_number}",
-      export_xcargs: auth
+      # Den API-Schlüssel reicht gym beim Export selbst an xcodebuild weiter.
+      export_xcargs: "-allowProvisioningUpdates"
     )
 
     # ADR-003, NG-004: nur TestFlight für interne Tester, keine App-Store-Prüfung.
