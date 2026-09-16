@@ -1,0 +1,3 @@
+- Repo verbindlich
+- CI/CD Workflow
+- build Artefakt kann Bibliothek sein
