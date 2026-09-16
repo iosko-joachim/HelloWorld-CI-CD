@@ -135,9 +135,9 @@ eingerichtet, gehört die Entscheidung wieder auf den Tisch.
 #### ADR-005
 
 Weniger Einrichtung: Der API-Schlüssel ist ohnehin nötig und reicht
-allein. Unerprobt in dieser Pipeline — scheitert die Signierung im
-ersten Lauf, gehört die Entscheidung wieder auf den Tisch, und match
-ist die Rückfallebene.
+allein. Erprobt am 2026-09-16: Build 20 wurde per Cloud-Signing signiert
+und in TestFlight installiert. Fällt Cloud-Signing aus, gehört die
+Entscheidung wieder auf den Tisch, und match ist die Rückfallebene.
 
 ### 4. Was folgt daraus?
 
