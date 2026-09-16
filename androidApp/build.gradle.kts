@@ -29,7 +29,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    // RISK-003: Keystore und Passwörter kommen ausschließlich aus Umgebungs-
+    // RISK-003: Keystore und Passwort kommen ausschließlich aus Umgebungs-
     // variablen (GitHub Actions Secrets in der CI/CD-Pipeline, C-001), nie aus
     // dem Repository. Ohne ANDROID_KEYSTORE_PATH bleibt der Release-Build
     // unsigniert – reicht zum lokalen Bauen, nicht zur Store-Einreichung.
@@ -39,8 +39,9 @@ android {
             create("release") {
                 storeFile = file(keystorePath)
                 storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
-                keyAlias = System.getenv("ANDROID_KEY_ALIAS")
-                keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+                keyAlias = "upload"
+                // PKCS12 kennt kein eigenes Schlüssel-Passwort.
+                keyPassword = storePassword
             }
         }
     }

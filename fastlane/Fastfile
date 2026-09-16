@@ -1,11 +1,18 @@
 # X-004 Fastlane (projekt/extern/X-004.md), aufgerufen aus C-001 (.github/workflows/ci-cd.yml).
-# Alle Zugangsdaten kommen aus Umgebungsvariablen (RISK-003).
+# Geheimes kommt aus GitHub Actions Secrets (RISK-003), nicht Geheimes aus
+# fastlane/.env.default.
 
 APP_ID = "com.iosko.helloworldcicd"
 
+def need(name)
+  value = ENV[name].to_s
+  UI.user_error!("#{name} fehlt – Secret bei GitHub oder Eintrag in fastlane/.env.default") if value.empty?
+  value
+end
+
 # Store-Build-Nummer = Lauf-Nummer der Pipeline (daten.md, Frage 5).
 def build_number
-  ENV.fetch("GITHUB_RUN_NUMBER")
+  need("GITHUB_RUN_NUMBER")
 end
 
 platform :android do
@@ -17,7 +24,7 @@ platform :android do
     upload_to_play_store(
       package_name: APP_ID,
       aab: File.expand_path(aab),
-      json_key_data: ENV.fetch("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"),
+      json_key_data: need("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"),
       track: "production", # ADR-003
       release_status: "completed",
       skip_upload_metadata: true,
@@ -34,9 +41,9 @@ platform :ios do
     setup_ci
 
     api_key = app_store_connect_api_key(
-      key_id: ENV.fetch("APP_STORE_CONNECT_API_KEY_ID"),
-      issuer_id: ENV.fetch("APP_STORE_CONNECT_API_ISSUER_ID"),
-      key_content: ENV.fetch("APP_STORE_CONNECT_API_KEY_CONTENT"),
+      key_id: need("APP_STORE_CONNECT_API_KEY_ID"),
+      issuer_id: need("APP_STORE_CONNECT_API_ISSUER_ID"),
+      key_content: need("APP_STORE_CONNECT_API_KEY_CONTENT"),
       is_key_content_base64: true
     )
 
@@ -50,9 +57,9 @@ platform :ios do
     update_code_signing_settings(
       path: "iosApp/iosApp.xcodeproj",
       use_automatic_signing: false,
-      team_id: ENV.fetch("APPLE_TEAM_ID"),
+      team_id: need("APPLE_TEAM_ID"),
       code_sign_identity: "Apple Distribution",
-      profile_name: ENV.fetch("sigh_#{APP_ID}_appstore_profile-name")
+      profile_name: need("sigh_#{APP_ID}_appstore_profile-name")
     )
 
     build_app(
@@ -60,7 +67,7 @@ platform :ios do
       scheme: "iosApp",
       configuration: "Release",
       export_method: "app-store",
-      xcargs: "TEAM_ID=#{ENV.fetch('APPLE_TEAM_ID')} CURRENT_PROJECT_VERSION=#{build_number}"
+      xcargs: "TEAM_ID=#{need('APPLE_TEAM_ID')} CURRENT_PROJECT_VERSION=#{build_number}"
     )
 
     upload_to_app_store(
