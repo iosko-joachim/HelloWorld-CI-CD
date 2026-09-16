@@ -1,13 +1,14 @@
 ---
 id: RISK-002
-titel: Google Play verlangt eine Testphase vor Produktions-Release
+titel: Google lässt auch den internen Test noch nicht zu
 projektion: risiko
 status: entwurf
-description: Neue Entwicklerkonten müssen oft eine Testphase durchlaufen — Wahrscheinlichkeit hoch, hingenommen.
+description: Unvollständige App-Einrichtung kann auch den internen Test blockieren — wird beobachtet.
 betrifft: G-002, X-002
 ---
 
-Google Play verlangt für neue Entwicklerkonten häufig eine geschlossene
-Testphase mit einer Mindestzahl an Testern über eine Mindestdauer, bevor
-ein Produktions-Release möglich ist. Wahrscheinlichkeit hoch, Wirkung
-mittel. Umgang: hinnehmen (siehe [[ADR-003]]).
+Solange die App bei Google Play als Entwurf gilt oder ihre Einrichtung
+unvollständig ist, lehnt die Play Console auch Releases im internen Test
+ab oder erlaubt nur Entwurfs-Releases. Spur: [[I-002]] scheitert mit
+„Google Api Error", obwohl das AAB angenommen wurde. Wahrscheinlichkeit
+mittel, Wirkung mittel. Umgang: beobachten.

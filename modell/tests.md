@@ -178,12 +178,11 @@ beiden prüfen Verschiedenes, das eine ersetzt das andere nicht.
   korrekt an das (gemockte) App Store Connect übergibt.
 - **Womit?** Echtes Fastlane, simulierte App-Store-Connect-API-Antwort.
 - **Was wird erwartet?** IPA + Metadaten werden mit korrektem Format
-  übergeben, gemockte Antwort "eingereicht, in Prüfung" wird
+  übergeben, gemockte Antwort "in TestFlight hochgeladen" wird
   weitergereicht.
-- **Fehlerfall:** gemockte Ablehnung (z. B. Guideline 4.2) oder
-  Upload-Fehler → I-003 meldet Fehlschlag, gilt selbst als Ergebnis
-  (G-002).
-- **Defaults:** Happy Case = Einreichung erfolgreich, "in Prüfung".
+- **Fehlerfall:** gemockter Upload-Fehler → I-003 meldet Fehlschlag,
+  gilt selbst als Ergebnis (G-002).
+- **Defaults:** Happy Case = Build in TestFlight hochgeladen.
   Leere Eingabe = kein Build-Artefakt → Stufe bricht vor dem Aufruf ab.
   Ungültiger Wert = fehlerhaftes IPA/Signatur → Fastlane meldet
   Validierungsfehler. Fehlende Verbindung = gemockter Verbindungsfehler

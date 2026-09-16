@@ -16,8 +16,8 @@ Darf grob sein. Wird später verfeinert.
 Das Projekt demonstriert die CI/CD-Fähigkeiten von GitHub im Zusammenspiel
 mit einem Apple- und einem Google-Entwicklerkonto: eine minimale mobile App
 (Kotlin Multiplatform mit Compose Multiplatform) wird bei jedem Push
-automatisch gebaut, getestet und in den Apple App Store und bei Google Play
-veröffentlicht.
+automatisch gebaut und getestet und auf Knopfdruck in die Testschienen von
+Google Play und Apple TestFlight eingereicht.
 
 ### 2. Was ist die Kernlogik?
 
@@ -30,17 +30,14 @@ World / Hallo Welt) ist absichtlich nebensächlich.
 - GitHub (Actions) ist die zentrale CI/CD-Plattform.
 - Tech-Stack: Kotlin Multiplatform mit Compose Multiplatform — eine
   Codebasis für Android und iOS.
-- Auslöser: Push auf das Repository.
-- Ziel des Deployments: öffentlicher Store-Release, sowohl Google Play
-  als auch Apple App Store.
+- Auslöser: Push auf das Repository für Build und Test, Knopfdruck für
+  die Einreichung (ADR-004).
+- Ziel des Deployments: die Testschienen — Google Play „Interner Test",
+  Apple TestFlight —, kein öffentlicher Release (NG-004, ADR-003).
+- Zugangsdaten liegen als GitHub Actions Secrets, nicht Geheimes in
+  `fastlane/.env.default` (RISK-003).
 
-**Offen:**
-- Wie Signierung/Zertifikate (Apple) und Keystore (Google) als Secrets in
-  GitHub Actions abgelegt werden.
-- Ob Apples Review (Guideline 4.2, Mindestfunktionalität) eine triviale
-  Hello-World-App überhaupt durchlässt — siehe `risiko.md`.
-- Release-Strategie: jeder Push ein neuer Store-Release, oder nur bei
-  Tags/Versionsbump?
+**Offen:** —
 
 ### 3. Was ist ausdrücklich nicht das Ziel?
 
@@ -65,6 +62,11 @@ Build, Signierung und Einreichung laufen über die Pipeline, nicht über
 manuelles Bauen, Signieren oder Hochladen in App Store Connect oder der
 Play Console.
 
+#### NG-004 Kein öffentlicher Store-Release
+
+Die App geht nur in die Testschienen (Google Play „Interner Test", Apple
+TestFlight) und wird nicht für fremde Nutzer im Store veröffentlicht.
+
 ### 4. Woran erkennt man, dass es funktioniert?
 
 Keine Metriken. Nur: Woran würdest du merken, dass es das Richtige tut?
@@ -80,22 +82,19 @@ nach Gesprächsverlauf mal als Ziel, mal als Risiko, mal als Test da.
 Ein Push auf das Repository löst automatisch einen GitHub-Actions-Workflow
 aus, der die App für Android und iOS baut und testet.
 
-#### G-002 Automatische Einreichung bei beiden Stores
+#### G-002 Automatische Einreichung in die Testschienen beider Stores
 
-Bei erfolgreichem Build reicht die Pipeline die App automatisch bei
-Google Play und im Apple App Store ein — ohne manuellen Zwischenschritt.
-Ziel ist die automatische Einreichung bis zum Ende der Pipeline; ob die
-Store-Prüfung die Veröffentlichung freigibt, steht außerhalb der
-Kontrolle des Projekts. Eine Ablehnung (z. B. Apple Guideline 4.2) ist
-kein Scheitern der Pipeline, sondern selbst ein Ergebnis — mindestens
-eine Fehlermeldung an der Stelle, die zeigt, dass die Kette bis dorthin
+Auf Knopfdruck reicht die Pipeline die App bei Google Play („Interner
+Test") und in Apple TestFlight ein — ohne manuellen Zwischenschritt.
+Scheitert die Einreichung an einer Vorgabe des Stores, ist die
+Fehlermeldung selbst ein Ergebnis: Sie zeigt, dass die Kette bis dorthin
 lief.
 
-#### G-003 Sichtbare Source-zu-Store-Kette
+#### G-003 Sichtbare Source-zu-Gerät-Kette
 
 Eine Änderung auf Source-Ebene (z. B. "Hello World" → "Hallo Welt") ist
-nach einem Durchlauf der Pipeline im eingereichten bzw. veröffentlichten
-Artefakt nachvollziehbar.
+nach einem Durchlauf der Pipeline in der App auf dem eigenen Testgerät
+zu sehen.
 
 ## Was hier entsteht
 

@@ -82,12 +82,10 @@ Für jede:
 
 #### X-003 Apple App Store Connect
 
-- **Fällt aus?** Ja — Störung, API-Fehler, oder Ablehnung durch die
-  Review (kein Ausfall im technischen Sinn, wirkt aber gleich: die
-  Einreichung kommt nicht durch).
+- **Fällt aus?** Ja — Störung oder API-Fehler bei Apple.
 - **Fallback:** keiner.
-- **Fehlerverhalten:** I-003 schlägt fehl bzw. bleibt „in Prüfung"/wird
-  abgelehnt; Fehlermeldung im Actions-Log oder in App Store Connect.
+- **Fehlerverhalten:** I-003 schlägt fehl, Fehlermeldung im Actions-Log;
+  oder der Build bleibt in TestFlight hängen (RISK-001).
 - **Sichtbar für den Menschen?** Ja.
 
 #### X-004 Fastlane
@@ -147,7 +145,7 @@ Für jede:
 - **Warum so:** Dienst eines Dritten mit Limits/Kosten, gehört nicht
   uns.
 - **Mock:** simulierte App-Store-Connect-API-Antwort (Erfolg,
-  Upload-Fehler, Ablehnung).
+  Upload-Fehler).
 
 #### X-004 Fastlane
 
@@ -180,8 +178,8 @@ Für jede:
 
 #### X-003 Apple App Store Connect
 
-- **Austauschbar?** Nein. G-002 verlangt ausdrücklich den Apple App
-  Store als iOS-Ziel.
+- **Austauschbar?** Nein. G-002 verlangt ausdrücklich Apple TestFlight
+  als iOS-Ziel.
 
 #### X-004 Fastlane
 

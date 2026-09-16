@@ -34,16 +34,16 @@ Fastlane kapselt Signierung und Upload für Android- und
 iOS-Einreichung, statt die Store-APIs direkt aus dem Workflow
 anzusprechen.
 
-#### ADR-003 Deployment bis zum öffentlichen Store-Release
+#### ADR-003 Einreichung nur in die Testschienen
 
-Die Pipeline reicht bis zum öffentlichen Store-Release (Google Play
-Produktions-Track, Apple App Store), nicht nur bis TestFlight/Internal
-Testing.
+Die Pipeline reicht bis in die Testschienen der Stores — Google Play
+„Interner Test", Apple TestFlight mit internen Testern —, nicht in einen
+öffentlichen Store-Release (NG-004).
 
 #### ADR-004 Einreichung per Knopfdruck statt bei jedem Push
 
 Ein Push löst nur Build und Test aus. Die Einreichung bei Google Play
-und/oder im Apple App Store startet von Hand über „Run workflow" in
+und/oder Apple TestFlight startet von Hand über „Run workflow" in
 GitHub Actions, mit Wahl des Ziels (Google, Apple, beide).
 
 ### 2. Was wurde verworfen, und warum?
@@ -75,15 +75,18 @@ keiner abgelöst hat, als verwaist.
 
 #### ADR-003
 
-- **Nur bis TestFlight/Internal Testing automatisieren** — geringeres
-  Risiko einer Ablehnung, zeigt aber nicht die volle Kette bis zum
-  Nutzer.
+- **Öffentlicher Store-Release** (Google Play Produktion, Apple App
+  Store) — war nie Ziel des Projekts. Braucht die Store-Prüfung (bei
+  Apple droht Ablehnung einer trivialen App nach Guideline 4.2) und bei
+  Google für neue Konten erst einen geschlossenen Test; der erste Lauf
+  gegen Produktion (2026-09-16) endete mit „Google Api Error: Invalid
+  request - Precondition check failed".
 
 #### ADR-004
 
 - **Einreichung bei jedem Push** (ursprünglich G-002) — solange Konten
   und Secrets fehlen, schlägt jeder Push fehl, und ein fertig
-  eingerichteter Zustand würde jeden Commit veröffentlichen (RISK-004).
+  eingerichteter Zustand würde jeden Commit einreichen (RISK-004).
 - **Nur Google per Knopfdruck, Apple weiter bei jedem Push** — jeder
   Push bliebe rot, bis die Apple-Konten eingerichtet sind.
 
@@ -107,15 +110,15 @@ nicht eine eigene Store-API-Integration bauen.
 
 #### ADR-003
 
-Der Wunsch, die komplette Kette von Source-Änderung bis zur echten
-Veröffentlichung zu sehen (G-002, G-003). Eine Ablehnung unterwegs gilt
-als akzeptables Ergebnis, nicht als Fehlschlag des Ziels.
+Gezeigt werden soll die Kette von der Source-Änderung bis auf das eigene
+Gerät (G-003), nicht die Veröffentlichung für fremde Nutzer. Die
+Testschienen kommen ohne Store-Prüfung aus.
 
 #### ADR-004
 
 Die Store-Konten und Secrets werden Schritt für Schritt eingerichtet;
 bis dahin soll ein Push nicht an fehlenden Zugangsdaten scheitern, und
-veröffentlicht wird nur, wenn der Mensch es auslöst. Sind alle Konten
+eingereicht wird nur, wenn der Mensch es auslöst. Sind alle Konten
 eingerichtet, gehört die Entscheidung wieder auf den Tisch.
 
 ### 4. Was folgt daraus?
@@ -136,8 +139,9 @@ mocken.
 
 #### ADR-003
 
-G-002 verlangt einen Produktions-Release; RISK-001 und RISK-002
-entstehen daraus und werden bewusst hingenommen.
+NG-004; G-002 als Einreichung in die Testschienen; I-002 reicht in den
+Track „internal" ein, I-003 lädt nach TestFlight hoch statt zur
+App-Store-Prüfung.
 
 #### ADR-004
 

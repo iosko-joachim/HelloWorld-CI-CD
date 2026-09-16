@@ -21,24 +21,24 @@ Für jedes Risiko:
 - **Betrifft** — welches Artefakt? (G-, NG-, C-, I-, X-, S-, A-, D-)
 - **Woran man es merkt** — die messbare Spur
 
-#### RISK-001 Apple-Review lehnt die App ab
+#### RISK-001 TestFlight-Build hängt an fehlender Export-Compliance
 
-- **Risiko:** Guideline 4.2 (Minimum Functionality) — Apple lehnt eine
-  App ab, die nur "Hello World"/"Hallo Welt" zeigt.
+- **Risiko:** Apple gibt einen hochgeladenen Build erst an Tester frei,
+  wenn die Frage nach Verschlüsselung beantwortet ist. Fehlt die Angabe,
+  bleibt der Build auf „Fehlende Compliance" stehen, und die Kette endet
+  vor dem Gerät.
 - **Betrifft:** G-002, X-003.
-- **Woran man es merkt:** Ablehnungsnachricht in App Store Connect,
-  I-003 schlägt fehl.
+- **Woran man es merkt:** Build steht in App Store Connect auf „Missing
+  Compliance", I-003 selbst meldet Erfolg.
 
-#### RISK-002 Google Play verlangt eine Testphase vor Produktions-Release
+#### RISK-002 Google lässt auch den internen Test noch nicht zu
 
-- **Risiko:** Google Play verlangt für neue Entwicklerkonten häufig
-  eine geschlossene Testphase mit einer Mindestzahl an Testern über
-  eine Mindestdauer, bevor ein Produktions-Release möglich ist —
-  automatischer Direkt-Release scheitert dann beim ersten Versuch.
+- **Risiko:** Solange die App bei Google Play als Entwurf gilt oder ihre
+  Einrichtung unvollständig ist, lehnt die Play Console auch
+  Releases im internen Test ab oder erlaubt nur Entwurfs-Releases.
 - **Betrifft:** G-002, X-002.
-- **Woran man es merkt:** Play Console verweigert den
-  Produktions-Rollout, I-002 schlägt fehl oder landet nur in einer
-  Testschiene.
+- **Woran man es merkt:** I-002 schlägt mit einem „Google Api Error" fehl,
+  obwohl das AAB angenommen wurde.
 
 #### RISK-003 Signierung/Secrets falsch gehandhabt
 
@@ -49,14 +49,13 @@ Für jedes Risiko:
 - **Woran man es merkt:** Secret taucht im Diff, im Log oder in der
   Historie auf; im schlimmsten Fall Missbrauch der Entwickler-Konten.
 
-#### RISK-004 Ungewollter Store-Release durch jeden Push
+#### RISK-004 Ungewollte Einreichung durch jeden Push
 
-- **Risiko:** Da jeder Push auf `main` einen Store-Release auslöst
-  (G-001, I-001), kann ein nicht dafür gedachter Commit einen echten
-  Release erzeugen.
+- **Risiko:** Löste jeder Push auf `main` eine Einreichung aus (G-001,
+  I-001), ginge auch ein nicht dafür gedachter Commit an die Tester.
 - **Betrifft:** G-002, C-001.
-- **Woran man es merkt:** neuer Release in Play Console/App Store
-  Connect nach einem Push, der nicht dafür gedacht war.
+- **Woran man es merkt:** neuer Build in Play Console/TestFlight nach
+  einem Push, der nicht dafür gedacht war.
 
 #### RISK-005 iOS-Build braucht einen macOS-Runner
 
@@ -76,8 +75,8 @@ Für jedes Risiko:
 
 | ID | Wahrscheinlich | Wirkung |
 |---|---|---|
-| RISK-001 | mittel | mittel |
-| RISK-002 | hoch | mittel |
+| RISK-001 | hoch | mittel |
+| RISK-002 | mittel | mittel |
 | RISK-003 | mittel | hoch |
 | RISK-004 | mittel | niedrig |
 | RISK-005 | mittel | mittel |
@@ -98,8 +97,8 @@ gemessen wird. Sonst ist es ein höfliches Wort für „hinnehmen".
 
 | ID | Umgang |
 |---|---|
-| RISK-001 | hinnehmen |
-| RISK-002 | hinnehmen |
+| RISK-001 | vermeiden — `ITSAppUsesNonExemptEncryption = false` in `Info.plist`, die App verschlüsselt nichts |
+| RISK-002 | beobachten — die Annotation von I-002 in der Lauf-Zusammenfassung zeigt die Meldung; ggf. Einrichtung in der Play Console nachholen |
 | RISK-003 | vermeiden — GitHub Secrets, keine Zertifikate/Keystores im Repository, Fastlane `match` (oder vergleichbar) zur verschlüsselten Verwaltung |
 | RISK-004 | vermeiden — Einreichung nur per Knopfdruck, ein Push baut und testet nur (ADR-004) |
 | RISK-005 | abfedern — macOS-Runner explizit für die iOS-Stufe im Workflow einplanen |
@@ -112,12 +111,7 @@ Die Liste selbst wird nicht geführt — sie ist abgeleitet: alle Risiken mit
 Umgang `hinnehmen` aus Frage 3. Gepflegt wird nur das **Warum**; sonst
 veraltet sie, sobald ein Risiko seinen Umgang ändert.
 
-**Warum bei RISK-001 und RISK-002:** Das Ziel des Projekts ist die
-automatische Einreichung bis zum Ende der Pipeline (G-002), nicht die
-Garantie einer dauerhaften Veröffentlichung. Eine Ablehnung durch Apple
-oder eine verlangte Testphase bei Google ist selbst ein Ergebnis — sie
-zeigt, dass die Kette bis dorthin gelaufen ist — und keine Störung des
-Ziels.
+Derzeit hat kein Risiko den Umgang `hinnehmen`.
 
 ## Was hier entsteht
 

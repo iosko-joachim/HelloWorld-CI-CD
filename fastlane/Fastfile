@@ -25,7 +25,7 @@ platform :android do
       package_name: APP_ID,
       aab: File.expand_path(aab),
       json_key_data: need("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"),
-      track: "production", # ADR-003
+      track: "internal", # ADR-003, NG-004
       release_status: "completed",
       skip_upload_metadata: true,
       skip_upload_changelogs: true,
@@ -70,15 +70,10 @@ platform :ios do
       xcargs: "TEAM_ID=#{need('APPLE_TEAM_ID')} CURRENT_PROJECT_VERSION=#{build_number}"
     )
 
-    upload_to_app_store(
+    # ADR-003, NG-004: nur TestFlight für interne Tester, keine App-Store-Prüfung.
+    upload_to_testflight(
       api_key: api_key,
-      submit_for_review: true, # ADR-003
-      automatic_release: true,
-      force: true,
-      skip_metadata: true,
-      skip_screenshots: true,
-      precheck_include_in_app_purchases: false,
-      submission_information: { add_id_info_uses_idfa: false }
+      skip_waiting_for_build_processing: true
     )
   end
 end

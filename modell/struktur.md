@@ -36,12 +36,14 @@ Für jede Komponente:
 
 #### C-001 CI/CD-Workflow
 
-- **Aufgabe:** Baut, testet, signiert und reicht die App bei Google Play
-  und im Apple App Store ein, ausgelöst durch einen Push.
+- **Aufgabe:** Baut und testet die App bei jedem Push, signiert sie auf
+  Knopfdruck und reicht sie in die Testschienen von Google Play und
+  Apple TestFlight ein.
 - **Rolle:** zentral.
 - **Dient:** G-001, G-002, G-003.
 - **Verarbeitet:** —
-- **Beachtet:** NG-003 (keine manuellen Schritte).
+- **Beachtet:** NG-003 (keine manuellen Schritte), NG-004 (kein
+  öffentlicher Store-Release).
 
 #### C-002 Mobile App
 
@@ -104,7 +106,7 @@ Für jedes Interface:
 - **Ausgabe:** eingereichtes Release.
 - **Empfänger:** X-002 Google Play Console, über X-004 Fastlane.
 - **Was wird übergeben:** AAB + Store-Metadaten.
-- **Bei Erfolg:** Release erscheint in der Play Console.
+- **Bei Erfolg:** Release erscheint in der Play Console im internen Test.
 - **Bei Fehler:** Fastlane/Play-API meldet Fehler, Workflow schlägt
   fehl.
 
@@ -115,17 +117,16 @@ Für jedes Interface:
 - **Ausgabe:** eingereichtes Release.
 - **Empfänger:** X-003 Apple App Store Connect, über X-004 Fastlane.
 - **Was wird übergeben:** IPA + Store-Metadaten.
-- **Bei Erfolg:** Release erscheint in App Store Connect zur Prüfung.
-- **Bei Fehler:** Fastlane/App-Store-Connect-API meldet Fehler
-  (Upload-Fehler oder Ablehnung, z. B. Guideline 4.2) — gilt selbst als
-  Ergebnis, siehe G-002.
+- **Bei Erfolg:** Build erscheint in TestFlight für die internen Tester.
+- **Bei Fehler:** Fastlane/App-Store-Connect-API meldet Fehler, Workflow
+  schlägt fehl — die Meldung gilt selbst als Ergebnis, siehe G-002.
 
 #### I-004 App-Start
 
 - **Gehört zu:** C-002.
 - **Eingabe:** Start durch das Betriebssystem (Android/iOS).
 - **Ausgabe:** "Hello World"- bzw. "Hallo Welt"-Text auf dem Bildschirm.
-- **Empfänger:** wer die App öffnet (Tester, App-Store-Reviewer).
+- **Empfänger:** wer die App öffnet (Tester).
 - **Was wird übergeben:** Text-String aus dem Source.
 - **Bei Erfolg:** Text sichtbar.
 - **Bei Fehler:** App stürzt ab oder zeigt nichts.
