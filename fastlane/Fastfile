@@ -71,8 +71,9 @@ platform :ios do
       export_method: "app-store",
       export_team_id: team,
       export_options: { signingStyle: "automatic", teamID: team },
+      # Archiv automatisch signiert; die Verteilungs-Signatur kommt beim Export.
       xcargs: "#{auth} DEVELOPMENT_TEAM=#{team} CODE_SIGN_STYLE=Automatic " \
-              "CODE_SIGN_IDENTITY='Apple Distribution' CURRENT_PROJECT_VERSION=#{build_number}",
+              "CURRENT_PROJECT_VERSION=#{build_number}",
       export_xcargs: auth
     )
 
