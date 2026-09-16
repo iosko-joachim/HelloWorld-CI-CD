@@ -22,6 +22,24 @@ Betrifft sie mehrere oder das Ganze, ist sie ein `ADR-`.
 
 In einem Satz. Das Ergebnis, nicht der Weg dorthin.
 
+#### ADR-001 Kotlin Multiplatform mit Compose Multiplatform, ein Modul
+
+Die App ist ein einziges Kotlin-Multiplatform-Modul mit Compose
+Multiplatform für Android und iOS — kein natives Projekt je Plattform,
+keine getrennten Build-Komponenten.
+
+#### ADR-002 Fastlane für die Store-Einreichung
+
+Fastlane kapselt Signierung und Upload für Android- und
+iOS-Einreichung, statt die Store-APIs direkt aus dem Workflow
+anzusprechen.
+
+#### ADR-003 Deployment bis zum öffentlichen Store-Release
+
+Die Pipeline reicht bis zum öffentlichen Store-Release (Google Play
+Produktions-Track, Apple App Store), nicht nur bis TestFlight/Internal
+Testing.
+
 ### 2. Was wurde verworfen, und warum?
 
 Die Alternativen, die ernsthaft im Raum standen. Ohne sie ist es kein ADR,
@@ -31,15 +49,74 @@ Löst diese Entscheidung eine frühere ab, nenne sie hier im Fließtext, als
 `[[…]]`-Verweis — nicht im Frontmatter. Sonst gälte jeder ADR, den noch
 keiner abgelöst hat, als verwaist.
 
+#### ADR-001
+
+- **Getrennte native Projekte** (Swift/iOS + Kotlin/Android) — zeigt
+  beide Plattform-Toolchains echter, aber doppelte Pflege für eine
+  App, deren Inhalt bewusst trivial bleibt (NG-001).
+- **Anderes Cross-Platform-Framework** (z. B. Flutter, React Native) —
+  liefert ebenfalls eine gemeinsame Codebasis, aber Kotlin Multiplatform
+  bleibt näher am nativen Android-Code.
+- **Getrennte Android-/iOS-Build-Komponenten trotz gemeinsamem Code** —
+  hätte zwei Komponenten für etwas erzeugt, dessen Quelle ohnehin
+  identisch ist.
+
+#### ADR-002
+
+- **Google Play Developer API und App Store Connect API direkt** —
+  spart die Fastlane-Abhängigkeit, bedeutet aber deutlich mehr
+  Pipeline-Code für Signierung, Upload und Metadaten je Plattform.
+
+#### ADR-003
+
+- **Nur bis TestFlight/Internal Testing automatisieren** — geringeres
+  Risiko einer Ablehnung, zeigt aber nicht die volle Kette bis zum
+  Nutzer.
+
 ### 3. Woran hing es?
 
 Das Kriterium, das den Ausschlag gab. Daran erkennt man später, ob die
 Entscheidung noch trägt: Gilt das Kriterium nicht mehr, gehört sie auf den
 Tisch.
 
+#### ADR-001
+
+Die App ist nur Träger, nicht das Ziel (NG-001) — der Aufwand auf der
+App-Seite soll minimal bleiben, damit die Pipeline (C-001) im Zentrum
+steht.
+
+#### ADR-002
+
+Fastlane ist Standard-Tooling für genau diesen Fall — beide Stores aus
+einer CI-Pipeline heraus. Das Projekt soll die Demonstration zeigen,
+nicht eine eigene Store-API-Integration bauen.
+
+#### ADR-003
+
+Der Wunsch, die komplette Kette von Source-Änderung bis zur echten
+Veröffentlichung zu sehen (G-002, G-003). Eine Ablehnung unterwegs gilt
+als akzeptables Ergebnis, nicht als Fehlschlag des Ziels.
+
 ### 4. Was folgt daraus?
 
 Welche Artefakte sind so, wie sie sind, wegen dieser Entscheidung?
+
+#### ADR-001
+
+C-002 als ein Modul, I-004 als eine Schnittstelle, T-001/T-002 als je
+ein Unit-Test statt mehrerer, RISK-005 (macOS-Runner nötig für das
+iOS-Target).
+
+#### ADR-002
+
+X-004 als externe Komponente, I-002 und I-003 laufen über sie, T-006
+und T-007 lassen X-004 echt mitlaufen (`laeuft-gegen`) statt sie zu
+mocken.
+
+#### ADR-003
+
+G-002 verlangt einen Produktions-Release; RISK-001 und RISK-002
+entstehen daraus und werden bewusst hingenommen.
 
 ## Was hier entsteht
 
@@ -69,9 +146,9 @@ liegt die Historie in Git — hier ist sie der Inhalt.
 
 ## Zustand
 
-- [ ] Was wurde entschieden?
-- [ ] Was wurde verworfen, und warum?
-- [ ] Woran hing es?
-- [ ] Was folgt daraus?
+- [x] Was wurde entschieden?
+- [x] Was wurde verworfen, und warum?
+- [x] Woran hing es?
+- [x] Was folgt daraus?
 
 ## Notizen
