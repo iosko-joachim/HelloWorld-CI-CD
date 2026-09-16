@@ -118,8 +118,6 @@ jobs:
       - name: Fastlane – Build, Signierung, App-Store-Connect-Upload
         # Nicht geheime Apple-Kennungen stehen in fastlane/.env.default.
         env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         # Fastlane-Fehler als Annotation, damit sie in der Lauf-Zusammenfassung stehen.
         run: |

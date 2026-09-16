@@ -46,6 +46,12 @@ Ein Push löst nur Build und Test aus. Die Einreichung bei Google Play
 und/oder Apple TestFlight startet von Hand über „Run workflow" in
 GitHub Actions, mit Wahl des Ziels (Google, Apple, beide).
 
+#### ADR-005 Apple-Cloud-Signing statt match
+
+Die iOS-Einreichung lässt Xcode Zertifikat und Profil selbst bei Apple
+holen (`-allowProvisioningUpdates`), angemeldet über den
+App-Store-Connect-API-Schlüssel. Es gibt kein Zertifikats-Repo.
+
 ### 2. Was wurde verworfen, und warum?
 
 Die Alternativen, die ernsthaft im Raum standen. Ohne sie ist es kein ADR,
@@ -90,6 +96,11 @@ keiner abgelöst hat, als verwaist.
 - **Nur Google per Knopfdruck, Apple weiter bei jedem Push** — jeder
   Push bliebe rot, bis die Apple-Konten eingerichtet sind.
 
+#### ADR-005
+
+- **Fastlane match** — bewährt und verbreitet, verlangt aber ein
+  privates Zertifikats-Repo, ein GitHub-Token und zwei weitere Secrets.
+
 ### 3. Woran hing es?
 
 Das Kriterium, das den Ausschlag gab. Daran erkennt man später, ob die
@@ -121,6 +132,13 @@ bis dahin soll ein Push nicht an fehlenden Zugangsdaten scheitern, und
 eingereicht wird nur, wenn der Mensch es auslöst. Sind alle Konten
 eingerichtet, gehört die Entscheidung wieder auf den Tisch.
 
+#### ADR-005
+
+Weniger Einrichtung: Der API-Schlüssel ist ohnehin nötig und reicht
+allein. Unerprobt in dieser Pipeline — scheitert die Signierung im
+ersten Lauf, gehört die Entscheidung wieder auf den Tisch, und match
+ist die Rückfallebene.
+
 ### 4. Was folgt daraus?
 
 Welche Artefakte sind so, wie sie sind, wegen dieser Entscheidung?
@@ -148,6 +166,12 @@ App-Store-Prüfung.
 G-002 wird nicht mehr bei jedem Push erfüllt, sondern auf Knopfdruck;
 I-002 und I-003 laufen nur bei manuellem Start. RISK-004 wird damit
 vermieden statt beobachtet.
+
+#### ADR-005
+
+I-003 signiert über Apple-Cloud-Signing; X-003 liefert neben dem Upload
+auch Zertifikat und Profil; für iOS braucht C-001 nur das Secret
+`APP_STORE_CONNECT_API_KEY_CONTENT`.
 
 ## Was hier entsteht
 

@@ -99,7 +99,7 @@ gemessen wird. Sonst ist es ein höfliches Wort für „hinnehmen".
 |---|---|
 | RISK-001 | vermeiden — `ITSAppUsesNonExemptEncryption = false` in `Info.plist`, die App verschlüsselt nichts |
 | RISK-002 | beobachten — die Annotation von I-002 in der Lauf-Zusammenfassung zeigt die Meldung; ggf. Einrichtung in der Play Console nachholen |
-| RISK-003 | vermeiden — GitHub Secrets, keine Zertifikate/Keystores im Repository, Fastlane `match` (oder vergleichbar) zur verschlüsselten Verwaltung |
+| RISK-003 | vermeiden — GitHub Secrets, keine Zertifikate/Keystores im Repository; iOS-Zertifikate verwaltet Apple selbst (Cloud-Signing, ADR-005) |
 | RISK-004 | vermeiden — Einreichung nur per Knopfdruck, ein Push baut und testet nur (ADR-004) |
 | RISK-005 | abfedern — macOS-Runner explizit für die iOS-Stufe im Workflow einplanen |
 

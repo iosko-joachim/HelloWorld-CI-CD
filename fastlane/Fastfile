@@ -2,6 +2,9 @@
 # Geheimes kommt aus GitHub Actions Secrets (RISK-003), nicht Geheimes aus
 # fastlane/.env.default.
 
+require "base64"
+require "tmpdir"
+
 APP_ID = "com.iosko.helloworldcicd"
 
 def need(name)
@@ -40,34 +43,37 @@ platform :ios do
   lane :deploy do
     setup_ci
 
+    team = need("APPLE_TEAM_ID")
+    key_id = need("APP_STORE_CONNECT_API_KEY_ID")
+    issuer_id = need("APP_STORE_CONNECT_API_ISSUER_ID")
+    key_content = need("APP_STORE_CONNECT_API_KEY_CONTENT")
+
     api_key = app_store_connect_api_key(
-      key_id: need("APP_STORE_CONNECT_API_KEY_ID"),
-      issuer_id: need("APP_STORE_CONNECT_API_ISSUER_ID"),
-      key_content: need("APP_STORE_CONNECT_API_KEY_CONTENT"),
+      key_id: key_id,
+      issuer_id: issuer_id,
+      key_content: key_content,
       is_key_content_base64: true
     )
 
-    match(
-      type: "appstore",
-      app_identifier: APP_ID,
-      api_key: api_key,
-      readonly: true
-    )
-
-    update_code_signing_settings(
-      path: "iosApp/iosApp.xcodeproj",
-      use_automatic_signing: false,
-      team_id: need("APPLE_TEAM_ID"),
-      code_sign_identity: "Apple Distribution",
-      profile_name: need("sigh_#{APP_ID}_appstore_profile-name")
-    )
+    # ADR-005: Xcode holt Zertifikat und Profil selbst bei Apple (Cloud-Signing),
+    # angemeldet über den API-Schlüssel statt über eine Apple-ID.
+    key_path = File.join(Dir.tmpdir, "AuthKey_#{key_id}.p8")
+    File.binwrite(key_path, Base64.decode64(key_content))
+    auth = "-allowProvisioningUpdates " \
+           "-authenticationKeyPath #{key_path} " \
+           "-authenticationKeyID #{key_id} " \
+           "-authenticationKeyIssuerID #{issuer_id}"
 
     build_app(
       project: "iosApp/iosApp.xcodeproj",
       scheme: "iosApp",
       configuration: "Release",
       export_method: "app-store",
-      xcargs: "TEAM_ID=#{need('APPLE_TEAM_ID')} CURRENT_PROJECT_VERSION=#{build_number}"
+      export_team_id: team,
+      export_options: { signingStyle: "automatic", teamID: team },
+      xcargs: "#{auth} DEVELOPMENT_TEAM=#{team} CODE_SIGN_STYLE=Automatic " \
+              "CODE_SIGN_IDENTITY='Apple Distribution' CURRENT_PROJECT_VERSION=#{build_number}",
+      export_xcargs: auth
     )
 
     # ADR-003, NG-004: nur TestFlight für interne Tester, keine App-Store-Prüfung.
