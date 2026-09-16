@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 // S-001 Hello-World-Screen (projekt/ui/S-001.md): zeigt nur diesen Text.
-private const val GREETING = "Здравей Мир!"
+private const val GREETING = "Здравей, свят!"
 
 @Composable
 fun App() {
