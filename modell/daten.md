@@ -24,6 +24,13 @@ Für jede:
 Eine Entität ist etwas, das man zählen kann und das einen Schlüssel hat.
 Ein abgeleiteter Wert ist keine Entität — er gehört in Frage 5.
 
+Keine. Das System hält keine Daten fest — es beachtet NG-002 (kein
+Backend, keine Datenhaltung). Was während eines Laufs entsteht — die
+Build-Artefakte AAB und IPA aus C-002 — ist ein flüchtiges
+Zwischenerzeugnis der Pipeline (C-001), keine Entität mit eigenem
+Lebenszyklus: Es wird erzeugt, an I-002/I-003 übergeben und danach nicht
+weiter gehalten.
+
 ### 2. Welche Felder hat jede, und was ist der Schlüssel?
 
 Für jede:
@@ -33,6 +40,8 @@ Für jede:
 
 Ein Schlüssel, den ein Mensch tippen muss, ist ein anderer als einer, den
 nur das System liest. Sag welchen du meinst.
+
+Entfällt — keine Entität aus Frage 1.
 
 ### 3. Wie hängen sie zusammen?
 
@@ -56,6 +65,8 @@ Ob eine Bestellung ohne Kunden sinnlos oder bloß unvollständig ist, folgt
 aus nichts anderem im Modell — das muss hier stehen. Wie es später
 geschrieben wird, steht nicht hier: Das ist Technik.
 
+Entfällt — keine Entität, also kein Verweis.
+
 ### 4. Wie lange lebt jede?
 
 Für jede eine von zwei Lebensdauern:
@@ -71,6 +82,10 @@ ist keine Antwort, wenn sie den Lauf überdauern kann.
 „Abgeleitet" ist keine Lebensdauer, sondern eine Herkunft — und keine
 Entität (Frage 1). Es gehört in Frage 5.
 
+Entfällt — keine Entität mit Lebensdauer. Das flüchtige Zwischenerzeugnis
+aus Frage 1 (AAB/IPA) ist keine Entität, deshalb keine Lebensdauer im
+Sinn dieser Frage.
+
 ### 5. Was wird ausdrücklich nicht gespeichert?
 
 Was könnte man naheliegenderweise festhalten und tut es bewusst nicht?
@@ -82,6 +97,12 @@ Antwort Fließtext ohne ID, und die Entität, die sie begrenzt, könnte mit
 
 Abgeleitete Werte gehören hierher: Was berechnet wird, wird nicht
 gespeichert — sonst laufen die beiden auseinander.
+
+Nutzerdaten, Analytics, Absturzberichte — alles, was eine echte App
+naheliegenderweise sammeln würde. Steht als NG-002 in `ziel.md`
+(„Kein Backend, keine Datenhaltung"). Version- und Build-Nummern für die
+Stores werden nicht als eigener Zustand gehalten, sondern bei jedem Lauf
+aus dem Commit/Zähler von C-001 abgeleitet.
 
 ## Was hier entsteht
 
@@ -109,10 +130,10 @@ Ausgemustert: —
 
 ## Zustand
 
-- [ ] Welche Datenentitäten gibt es?
-- [ ] Welche Felder hat jede, und was ist der Schlüssel?
-- [ ] Wie hängen sie zusammen?
-- [ ] Wie lange lebt jede?
-- [ ] Was wird ausdrücklich nicht gespeichert?
+- [x] Welche Datenentitäten gibt es?
+- [x] Welche Felder hat jede, und was ist der Schlüssel?
+- [x] Wie hängen sie zusammen?
+- [x] Wie lange lebt jede?
+- [x] Was wird ausdrücklich nicht gespeichert?
 
 ## Notizen
