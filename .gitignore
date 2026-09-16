@@ -1,2 +1,26 @@
 __pycache__/
 *.pyc
+
+# Gradle / Kotlin
+.gradle/
+.kotlin/
+build/
+local.properties
+
+# IDE
+.idea/
+*.iml
+
+# Xcode
+iosApp/iosApp.xcodeproj/project.xcworkspace/xcuserdata/
+iosApp/iosApp.xcodeproj/xcuserdata/
+DerivedData/
+*.xcuserstate
+.DS_Store
+
+# Signierung – niemals ins Repository (RISK-003)
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+*.cer
