@@ -1,0 +1,102 @@
+# C-001 CI/CD-Workflow (projekt/struktur/C-001.md)
+#
+# Baut, testet, signiert und reicht die App bei Google Play und im Apple
+# App Store ein. Stufen entsprechen I-001 (Push-Trigger), I-002
+# (Android-Einreichung), I-003 (iOS-Einreichung) aus projekt/struktur/.
+
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # I-001 Push-Trigger: Build & Test
+  build-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build & Test
+        run: ./gradlew build
+
+      - name: Android-Release-Bundle bauen
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > release.keystore
+          ./gradlew :composeApp:bundleRelease
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-release-aab
+          path: composeApp/build/outputs/bundle/release/*.aab
+          retention-days: 7
+
+  # I-002 Android-Einreichung: an X-002 (Google Play Console) über X-004 (Fastlane)
+  deploy-android:
+    name: Android-Einreichung
+    needs: build-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-release-aab
+          path: composeApp/build/outputs/bundle/release/
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Fastlane – Play-Console-Upload
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        run: bundle exec fastlane android deploy
+
+  # I-003 iOS-Einreichung: an X-003 (Apple App Store Connect) über X-004 (Fastlane)
+  # Läuft auf macOS, weil das Xcode-Archiv nur dort gebaut werden kann (RISK-005).
+  deploy-ios:
+    name: iOS-Build & Einreichung
+    needs: build-test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Fastlane – Build, Signierung, App-Store-Connect-Upload
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+        run: bundle exec fastlane ios deploy
