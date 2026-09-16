@@ -67,6 +67,17 @@ Für jedes Risiko:
   Linux-Runner fehl, oder das Minutenkontingent für macOS-Runner ist
   erschöpft.
 
+#### RISK-006 TestFlight-Update zeigt auf dem iPhone den alten Stand
+
+- **Risiko:** Nach dem Update über TestFlight meldet das iPhone den
+  neuen Build, die App zeigt aber weiter den alten Text; erst Löschen und
+  Neuinstallieren bringt den neuen Stand.
+- **Betrifft:** G-003, X-003.
+- **Woran man es merkt:** TestFlight nennt den neuen Build, die App zeigt
+  den Text des vorigen. Beobachtet am 2026-09-16 mit Build 24 (iOS 27,
+  kurz nach dem Systemupdate): „Hallo Welt" statt „Здравей, свят!",
+  während Android aus demselben Lauf richtig war. Ursache ungeklärt.
+
 ### 2. Wie wahrscheinlich, wie schlimm?
 
 Für jedes Risiko:
@@ -80,6 +91,7 @@ Für jedes Risiko:
 | RISK-003 | mittel | hoch |
 | RISK-004 | mittel | niedrig |
 | RISK-005 | mittel | mittel |
+| RISK-006 | mittel | niedrig |
 
 ### 3. Was tun wir dagegen?
 
@@ -102,6 +114,7 @@ gemessen wird. Sonst ist es ein höfliches Wort für „hinnehmen".
 | RISK-003 | vermeiden — GitHub Secrets, keine Zertifikate/Keystores im Repository; iOS-Zertifikate verwaltet Apple selbst (Cloud-Signing, ADR-005) |
 | RISK-004 | vermeiden — Einreichung nur per Knopfdruck, ein Push baut und testet nur (ADR-004) |
 | RISK-005 | abfedern — macOS-Runner explizit für die iOS-Stufe im Workflow einplanen |
+| RISK-006 | hinnehmen — App löschen und neu installieren |
 
 ### 4. Was nehmen wir bewusst hin?
 
@@ -111,7 +124,10 @@ Die Liste selbst wird nicht geführt — sie ist abgeleitet: alle Risiken mit
 Umgang `hinnehmen` aus Frage 3. Gepflegt wird nur das **Warum**; sonst
 veraltet sie, sobald ein Risiko seinen Umgang ändert.
 
-Derzeit hat kein Risiko den Umgang `hinnehmen`.
+**Warum bei RISK-006:** Das Projekt soll zeigen, dass GitHub für beide
+Plattformen bauen und ausliefern kann (G-001 bis G-003). Das ist
+gezeigt; einem Detailproblem der Aktualisierung auf dem iPhone wird
+bewusst nicht nachgegangen, Löschen und Neuinstallieren reicht.
 
 ## Was hier entsteht
 

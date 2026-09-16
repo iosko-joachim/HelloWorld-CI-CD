@@ -97,7 +97,9 @@ nach einem Durchlauf der Pipeline in der App auf dem eigenen Testgerät
 zu sehen.
 
 Bestätigt am 2026-09-16: "Hallo Welt" kam auf dem Android-Handy (Google
-Play, interner Test) und dem iPhone (TestFlight, Build 20) an.
+Play, interner Test) und dem iPhone (TestFlight, Build 20) an. Zweiter
+Durchlauf mit „Здравей, свят!" (Build 24) ebenso, auf dem iPhone aber
+erst nach Löschen und Neuinstallieren (RISK-006).
 
 ## Was hier entsteht
 
