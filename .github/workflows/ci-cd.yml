@@ -3,15 +3,26 @@
 # Baut, testet, signiert und reicht die App bei Google Play und im Apple
 # App Store ein. Stufen entsprechen I-001 (Push-Trigger), I-002
 # (Android-Einreichung), I-003 (iOS-Einreichung) aus projekt/struktur/.
+#
+# Push: nur Build & Test. Einreichung per Knopfdruck (ADR-004):
+# Actions → CI/CD → "Run workflow" → Ziel wählen.
 
 name: CI/CD
 
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      ziel:
+        description: Wohin einreichen?
+        type: choice
+        options: [beide, google, apple]
+        default: beide
 
 concurrency:
-  group: ci-cd-${{ github.ref }}
+  # Ein Push bricht keine laufende Einreichung ab.
+  group: ci-cd-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -33,6 +44,7 @@ jobs:
         run: ./gradlew build
 
       - name: Android-Release-Bundle bauen
+        if: github.event_name == 'workflow_dispatch' && inputs.ziel != 'apple'
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEYSTORE_PATH: ${{ github.workspace }}/release.keystore
@@ -44,6 +56,7 @@ jobs:
           ./gradlew :androidApp:bundleRelease
 
       - uses: actions/upload-artifact@v4
+        if: github.event_name == 'workflow_dispatch' && inputs.ziel != 'apple'
         with:
           name: android-release-aab
           path: androidApp/build/outputs/bundle/release/*.aab
@@ -53,6 +66,7 @@ jobs:
   deploy-android:
     name: Android-Einreichung
     needs: build-test
+    if: github.event_name == 'workflow_dispatch' && inputs.ziel != 'apple'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -77,6 +91,7 @@ jobs:
   deploy-ios:
     name: iOS-Build & Einreichung
     needs: build-test
+    if: github.event_name == 'workflow_dispatch' && inputs.ziel != 'google'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4

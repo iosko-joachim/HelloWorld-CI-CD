@@ -40,6 +40,12 @@ Die Pipeline reicht bis zum öffentlichen Store-Release (Google Play
 Produktions-Track, Apple App Store), nicht nur bis TestFlight/Internal
 Testing.
 
+#### ADR-004 Einreichung per Knopfdruck statt bei jedem Push
+
+Ein Push löst nur Build und Test aus. Die Einreichung bei Google Play
+und/oder im Apple App Store startet von Hand über „Run workflow" in
+GitHub Actions, mit Wahl des Ziels (Google, Apple, beide).
+
 ### 2. Was wurde verworfen, und warum?
 
 Die Alternativen, die ernsthaft im Raum standen. Ohne sie ist es kein ADR,
@@ -73,6 +79,14 @@ keiner abgelöst hat, als verwaist.
   Risiko einer Ablehnung, zeigt aber nicht die volle Kette bis zum
   Nutzer.
 
+#### ADR-004
+
+- **Einreichung bei jedem Push** (ursprünglich G-002) — solange Konten
+  und Secrets fehlen, schlägt jeder Push fehl, und ein fertig
+  eingerichteter Zustand würde jeden Commit veröffentlichen (RISK-004).
+- **Nur Google per Knopfdruck, Apple weiter bei jedem Push** — jeder
+  Push bliebe rot, bis die Apple-Konten eingerichtet sind.
+
 ### 3. Woran hing es?
 
 Das Kriterium, das den Ausschlag gab. Daran erkennt man später, ob die
@@ -97,6 +111,13 @@ Der Wunsch, die komplette Kette von Source-Änderung bis zur echten
 Veröffentlichung zu sehen (G-002, G-003). Eine Ablehnung unterwegs gilt
 als akzeptables Ergebnis, nicht als Fehlschlag des Ziels.
 
+#### ADR-004
+
+Die Store-Konten und Secrets werden Schritt für Schritt eingerichtet;
+bis dahin soll ein Push nicht an fehlenden Zugangsdaten scheitern, und
+veröffentlicht wird nur, wenn der Mensch es auslöst. Sind alle Konten
+eingerichtet, gehört die Entscheidung wieder auf den Tisch.
+
 ### 4. Was folgt daraus?
 
 Welche Artefakte sind so, wie sie sind, wegen dieser Entscheidung?
@@ -117,6 +138,12 @@ mocken.
 
 G-002 verlangt einen Produktions-Release; RISK-001 und RISK-002
 entstehen daraus und werden bewusst hingenommen.
+
+#### ADR-004
+
+G-002 wird nicht mehr bei jedem Push erfüllt, sondern auf Knopfdruck;
+I-002 und I-003 laufen nur bei manuellem Start. RISK-004 wird damit
+vermieden statt beobachtet.
 
 ## Was hier entsteht
 

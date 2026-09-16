@@ -101,7 +101,7 @@ gemessen wird. Sonst ist es ein höfliches Wort für „hinnehmen".
 | RISK-001 | hinnehmen |
 | RISK-002 | hinnehmen |
 | RISK-003 | vermeiden — GitHub Secrets, keine Zertifikate/Keystores im Repository, Fastlane `match` (oder vergleichbar) zur verschlüsselten Verwaltung |
-| RISK-004 | beobachten — Release-Strategie ist noch offen (`ziel.md`); vorerst nur `main` als Auslöser, ein zusätzliches Gate wird entschieden, sobald es einmal gestört hat |
+| RISK-004 | vermeiden — Einreichung nur per Knopfdruck, ein Push baut und testet nur (ADR-004) |
 | RISK-005 | abfedern — macOS-Runner explizit für die iOS-Stufe im Workflow einplanen |
 
 ### 4. Was nehmen wir bewusst hin?

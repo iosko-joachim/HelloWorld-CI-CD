@@ -3,11 +3,12 @@ id: RISK-004
 titel: Ungewollter Store-Release durch jeden Push
 projektion: risiko
 status: entwurf
-description: Jeder Push auf main löst einen Release aus — wird beobachtet.
+description: Ein Push könnte ungewollt veröffentlichen — vermieden durch Einreichung per Knopfdruck.
 betrifft: G-002, C-001
 ---
 
-Da jeder Push auf `main` einen Store-Release auslöst ([[G-001]],
-[[I-001]]), kann ein nicht dafür gedachter Commit einen echten Release
-erzeugen. Wahrscheinlichkeit mittel, Wirkung niedrig. Umgang: beobachten
-— die Release-Strategie ist noch offen, vorerst nur `main` als Auslöser.
+Würde jeder Push auf `main` einen Store-Release auslösen ([[G-001]],
+[[I-001]]), könnte ein nicht dafür gedachter Commit einen echten Release
+erzeugen. Wahrscheinlichkeit mittel, Wirkung niedrig. Umgang: vermeiden
+— ein Push baut und testet nur, eingereicht wird per Knopfdruck
+([[ADR-004]]).
